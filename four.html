@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<title>CONNECT 4</title>
+<style>
+body {
+  margin: 0;
+  border-top: 10px solid #f24040;
+  background: white url("connect4.png") no-repeat center top;
+}
+
+.row6 { top:  10px; }
+.row5 { top:  70px; }
+.row4 { top: 130px; }
+.row3 { top: 190px; }
+.row2 { top: 250px; }
+.row1 { top: 310px; }
+
+.col1 { left:  10px; }
+.col2 { left:  70px; }
+.col3 { left: 130px; }
+.col4 { left: 190px; }
+.col5 { left: 250px; }
+.col6 { left: 310px; }
+.col7 { left: 370px; }
+
+.circle {
+  position: absolute;
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  transition: border 0.2s ease 0s, background 0.4s, opacity 0.8s;
+}
+
+.gray { background: #d9d9d9; }
+.cyan { background: #40c2f2; }
+.pink { background: #f24076; }
+
+
+.tiny { border: 20px solid white; }
+.tiny:not(.gray) { cursor: pointer; }
+.tiny:not(.gray):hover {
+  animation: grow 0.4s ease 0s infinite alternate;
+}
+
+.done :not(.win).circle { opacity: 0.15;  }
+
+@keyframes grow {
+  from { border-width: 20px; }
+  to   { border-width: 5px; }
+}
+
+.base {
+  width: 430px;
+  height: 10px;
+  position: absolute;
+  top: 370px;
+  background: #4087f2;
+}
+
+#board {
+  margin: 160px auto 0;
+  position: relative;
+}
+
+</style>
+</head>
+<body>
+
+<div id="board" class="" style="width: 430px; height: 380px;">
+
+</div>
+
+<script>
+
+var
+  numRows      = 6, 
+  numColumns   = 7, 
+  winCondition = 4;
+
+var board = document.getElementById('board');
+
+var grid = [];
+var elems = [];
+
+var done = false;
+var turn = 'pink';
+
+for (var i = 0; i < numRows; i++) {
+  grid.push([]);
+  elems.push([]);
+  for (var j = 0; j < numColumns; j++) {
+    grid[i].push('gray');
+    var e = document.createElement('div');
+    e.classList.add('row' + (i+1), 'col' + (j+1), 'tiny', (i === 0) ? turn : 'gray', 'circle');
+    elems[i].push(e);
+    e.addEventListener('click', clicked(i, j));
+    board.appendChild(e);
+  }
+}
+
+var base = document.createElement('div');
+base.classList.add('base');
+board.appendChild(base);
+
+function nextTurn() {
+  turn = (turn === 'cyan') ? 'pink' : 'cyan';
+}
+
+function clicked(row, col) {
+  return function() {
+    if (done
+    || grid[row][col] != 'gray'
+    || row != 0 && grid[row-1][col] == 'gray') {
+      return;
+    }
+
+    put(row, col);
+    checkWin(row, col);
+
+    if (done) {
+      board.classList.add('done');
+      var theTiny = document.getElementsByClassName('tiny ' + turn);
+      [].slice.call(theTiny).forEach(function(e) { e.classList.remove(turn); e.classList.add('gray'); });
+    } else {
+      var oldTurn = turn;
+      nextTurn();
+      var theTiny = document.getElementsByClassName('tiny ' + oldTurn);
+      [].slice.call(theTiny).forEach(function(e) { e.classList.remove(oldTurn); e.classList.add(turn); });
+      if (row+1 != numRows) {
+        elems[row+1][col].classList.remove('gray');
+        elems[row+1][col].classList.add(turn);
+      }
+    }
+  };
+}
+
+function checkWin(row, col) {
+  var start, end;
+
+
+  for (start = col; start >= 0 && grid[row][start] == turn; start--);
+  start++;
+  for (end = col; end < numColumns && grid[row][end] == turn; end++);
+  end--;
+
+  if (end - start + 1 >= winCondition) {
+    done = true;
+    for (var i = start; i <= end; i++) {
+      elems[row][i].classList.add('win');
+    }
+  }
+
+
+  for (start = row; start >= 0 && grid[start][col] == turn; start--);
+  start++;
+  for (end = row; end < numRows && grid[end][col] == turn; end++);
+  end--;
+
+  if (end - start + 1 >= winCondition) {
+    done = true;
+    for (var i = start; i <= end; i++) {
+      elems[i][col].classList.add('win');
+    }
+  }
+
+
+  for (start = 0; Math.min(row+start, col+start) >= 0 && grid[row+start][col+start] == turn; start--);
+  start++;
+  for (end = 0; Math.max(row+end, col+end) < Math.min(numRows, numColumns) && grid[row+end][col+end] == turn; end++);
+  end--;
+
+  if (end - start + 1 >= winCondition) {
+    done = true;
+    for (var i = start; i <= end; i++) {
+      elems[row+i][col+i].classList.add('win');
+    }
+  }
+
+  for (start = 0; (row+start) >= 0 && (col-start) < numColumns && grid[row+start][col-start] == turn; start--);
+  start++;
+  for (end = 0; (col-end) >= 0 && (row+end) < numRows && grid[row+end][col-end] == turn; end++);
+  end--;
+
+  if (end - start + 1 >= winCondition) {
+    done = true;
+    for (var i = start; i <= end; i++) {
+      elems[row+i][col-i].classList.add('win');
+    }
+  }
+}
+
+function put(row, col) {
+  grid[row][col] = turn;
+  elems[row][col].classList.remove('tiny');
+}
+
+</script>
+</body>
+</html>
