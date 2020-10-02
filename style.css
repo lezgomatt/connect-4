@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  border-top: 10px solid #f24040;
+  background: white url("connect4.png") no-repeat center top;
+}
+
+.row6 { top:  10px; }
+.row5 { top:  70px; }
+.row4 { top: 130px; }
+.row3 { top: 190px; }
+.row2 { top: 250px; }
+.row1 { top: 310px; }
+
+.col1 { left:  10px; }
+.col2 { left:  70px; }
+.col3 { left: 130px; }
+.col4 { left: 190px; }
+.col5 { left: 250px; }
+.col6 { left: 310px; }
+.col7 { left: 370px; }
+
+.circle {
+  position: absolute;
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  transition: border 0.2s ease 0s, background 0.4s, opacity 0.8s;
+}
+
+.gray { background: #d9d9d9; }
+.cyan { background: #40c2f2; }
+.pink { background: #f24076; }
+
+
+.tiny { border: 20px solid white; }
+.tiny:not(.gray) { cursor: pointer; }
+.tiny:not(.gray):hover {
+  animation: grow 0.4s ease 0s infinite alternate;
+}
+
+.done :not(.win).circle { opacity: 0.15;  }
+
+@keyframes grow {
+  from { border-width: 20px; }
+  to   { border-width: 5px; }
+}
+
+.base {
+  width: 430px;
+  height: 10px;
+  position: absolute;
+  top: 370px;
+  background: #4087f2;
+}
+
+#board {
+  margin: 160px auto 0;
+  position: relative;
+  width: 430px;
+  height: 380px;
+}
