@@ -20,13 +20,18 @@ for (var i = 0; i < numRows; i++) {
         e.classList.add('row' + (i + 1), 'col' + (j + 1), 'tiny', (i === 0) ? turn : 'gray', 'circle');
         elems[i].push(e);
         e.addEventListener('click', clicked(i, j));
-        board.appendChild(e);
     }
 }
 
-var base = document.createElement('div');
-base.classList.add('base');
-board.appendChild(base);
+for (let c = 0; c < numColumns; c++) {
+    let col = document.createElement('div');
+    col.classList.add('col');
+    board.appendChild(col);
+
+    for (let r = numRows - 1; r >= 0; r--) {
+        col.appendChild(elems[r][c]);
+    }
+}
 
 function nextTurn() {
     turn = (turn === 'cyan') ? 'pink' : 'cyan';

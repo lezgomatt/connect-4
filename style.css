@@ -1,30 +1,23 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
   border-top: 10px solid #f24040;
   background: white url("connect4.png") no-repeat center top;
 }
 
-.row6 { top:  10px; }
-.row5 { top:  70px; }
-.row4 { top: 130px; }
-.row3 { top: 190px; }
-.row2 { top: 250px; }
-.row1 { top: 310px; }
-
-.col1 { left:  10px; }
-.col2 { left:  70px; }
-.col3 { left: 130px; }
-.col4 { left: 190px; }
-.col5 { left: 250px; }
-.col6 { left: 310px; }
-.col7 { left: 370px; }
-
 .circle {
-  position: absolute;
   box-sizing: border-box;
   width: 50px;
   height: 50px;
   border-radius: 25px;
+  margin: 5px;
   transition: border 0.2s ease 0s, background 0.4s, opacity 0.8s;
 }
 
@@ -47,16 +40,21 @@ body {
 }
 
 .base {
+  margin: -10px auto 0;
   width: 430px;
   height: 10px;
-  position: absolute;
-  top: 370px;
   background: #4087f2;
 }
 
 #board {
   margin: 160px auto 0;
-  position: relative;
   width: 430px;
   height: 380px;
+  display: flex;
+  padding: 5px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
 }
