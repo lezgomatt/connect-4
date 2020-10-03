@@ -27,8 +27,7 @@ body {
 
 
 .tiny { border: 20px solid white; }
-.tiny:not(.gray) { cursor: pointer; }
-.tiny:not(.gray):hover {
+.col:hover .tiny:not(.gray) {
   animation: grow 0.4s ease 0s infinite alternate;
 }
 

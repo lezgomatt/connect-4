@@ -19,7 +19,6 @@ for (var i = 0; i < numRows; i++) {
         var e = document.createElement('div');
         e.classList.add('row' + (i + 1), 'col' + (j + 1), 'tiny', (i === 0) ? turn : 'gray', 'circle');
         elems[i].push(e);
-        e.addEventListener('click', clicked(i, j));
     }
 }
 
@@ -27,6 +26,7 @@ for (let c = 0; c < numColumns; c++) {
     let col = document.createElement('div');
     col.classList.add('col');
     board.appendChild(col);
+    col.addEventListener('click', () => clicked(c));
 
     for (let r = numRows - 1; r >= 0; r--) {
         col.appendChild(elems[r][c]);
@@ -37,32 +37,33 @@ function nextTurn() {
     turn = (turn === 'cyan') ? 'pink' : 'cyan';
 }
 
-function clicked(row, col) {
-    return function () {
-        if (done
-            || grid[row][col] != 'gray'
-            || row != 0 && grid[row - 1][col] == 'gray') {
-            return;
-        }
+function clicked(col) {
+    if (done || grid[numRows - 1][col] != 'gray') {
+        return;
+    }
 
-        put(row, col);
-        checkWin(row, col);
+    let row = 0;
+    while (grid[row][col] !== 'gray') {
+        row++;
+    }
 
-        if (done) {
-            board.classList.add('done');
-            var theTiny = document.getElementsByClassName('tiny ' + turn);
-            [].slice.call(theTiny).forEach(function (e) { e.classList.remove(turn); e.classList.add('gray'); });
-        } else {
-            var oldTurn = turn;
-            nextTurn();
-            var theTiny = document.getElementsByClassName('tiny ' + oldTurn);
-            [].slice.call(theTiny).forEach(function (e) { e.classList.remove(oldTurn); e.classList.add(turn); });
-            if (row + 1 != numRows) {
-                elems[row + 1][col].classList.remove('gray');
-                elems[row + 1][col].classList.add(turn);
-            }
+    put(row, col);
+    checkWin(row, col);
+
+    if (done) {
+        board.classList.add('done');
+        var theTiny = document.getElementsByClassName('tiny ' + turn);
+        [].slice.call(theTiny).forEach(function (e) { e.classList.remove(turn); e.classList.add('gray'); });
+    } else {
+        var oldTurn = turn;
+        nextTurn();
+        var theTiny = document.getElementsByClassName('tiny ' + oldTurn);
+        [].slice.call(theTiny).forEach(function (e) { e.classList.remove(oldTurn); e.classList.add(turn); });
+        if (row + 1 != numRows) {
+            elems[row + 1][col].classList.remove('gray');
+            elems[row + 1][col].classList.add(turn);
         }
-    };
+    }
 }
 
 function checkWin(row, col) {
