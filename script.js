@@ -71,7 +71,7 @@ class Game {
         if (this.gameOver || this.getColor(this.numRows - 1, col) != null) {
             return;
         }
-    
+
         let row = 0;
         while (this.getColor(row, col) != null) {
             row++;
