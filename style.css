@@ -9,7 +9,10 @@ html {
 body {
   margin: 0;
   border-top: 10px solid #f24040;
-  background: white url("connect4.png") no-repeat center top;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .circle {
@@ -38,16 +41,13 @@ body {
 }
 
 .base {
-  margin: -10px auto 0;
-  width: 430px;
   height: 10px;
   background: #4087f2;
+  align-self: stretch;
 }
 
 #board {
-  margin: 160px auto 0;
-  width: 430px;
-  height: 380px;
+  margin: 50px 0 5px;
   display: flex;
   padding: 5px;
 }
@@ -55,4 +55,14 @@ body {
 .col {
   display: flex;
   flex-direction: column;
+}
+
+#game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  margin-top: -10px;
 }

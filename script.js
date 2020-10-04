@@ -17,7 +17,7 @@ for (var i = 0; i < numRows; i++) {
     for (var j = 0; j < numColumns; j++) {
         grid[i].push('gray');
         var e = document.createElement('div');
-        e.classList.add('row' + (i + 1), 'col' + (j + 1), 'tiny', (i === 0) ? turn : 'gray', 'circle');
+        e.classList.add('tiny', (i === 0) ? turn : 'gray', 'circle');
         elems[i].push(e);
     }
 }
