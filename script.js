@@ -1,127 +1,168 @@
-var
-    numRows = 6,
-    numColumns = 7,
-    winCondition = 4;
+"use strict";
 
-var board = document.getElementById('board');
+const ColorPink = "pink";
+const ColorCyan = "cyan";
 
-var grid = [];
-var elems = [];
+class Game {
+    constructor(gridElem, numRows, numCols, numToWin, firstColor) {
+        this.numRows = numRows;
+        this.numCols = numCols;
+        this.numToWin = numToWin;
 
-var done = false;
-var turn = 'pink';
+        // row direction: bottom to top
+        // column direction: left to right
+        this.grid = new Array(numRows * numCols).fill(null);
 
-for (var i = 0; i < numRows; i++) {
-    grid.push([]);
-    elems.push([]);
-    for (var j = 0; j < numColumns; j++) {
-        grid[i].push('gray');
-        var e = document.createElement('div');
-        e.classList.add('tiny', (i === 0) ? turn : 'gray', 'circle');
-        elems[i].push(e);
-    }
-}
+        this.gameOver = false;
+        this.turn = firstColor;
 
-for (let c = 0; c < numColumns; c++) {
-    let col = document.createElement('div');
-    col.classList.add('col');
-    board.appendChild(col);
-    col.addEventListener('click', () => clicked(c));
-
-    for (let r = numRows - 1; r >= 0; r--) {
-        col.appendChild(elems[r][c]);
-    }
-}
-
-function nextTurn() {
-    turn = (turn === 'cyan') ? 'pink' : 'cyan';
-}
-
-function clicked(col) {
-    if (done || grid[numRows - 1][col] != 'gray') {
-        return;
+        this.gridElem = gridElem;
+        this.initDom();
     }
 
-    let row = 0;
-    while (grid[row][col] !== 'gray') {
-        row++;
-    }
+    initDom() {
+        this.gridElem.classList.add(`turn-${this.turn}`);
 
-    put(row, col);
-    checkWin(row, col);
+        for (let c = 0; c < this.numCols; c++) {
+            let col = document.createElement("div");
+            col.classList.add("col");
+            col.addEventListener("click", () => this.drop(c));
+            this.gridElem.appendChild(col);
 
-    if (done) {
-        board.classList.add('done');
-        var theTiny = document.getElementsByClassName('tiny ' + turn);
-        [].slice.call(theTiny).forEach(function (e) { e.classList.remove(turn); e.classList.add('gray'); });
-    } else {
-        var oldTurn = turn;
-        nextTurn();
-        var theTiny = document.getElementsByClassName('tiny ' + oldTurn);
-        [].slice.call(theTiny).forEach(function (e) { e.classList.remove(oldTurn); e.classList.add(turn); });
-        if (row + 1 != numRows) {
-            elems[row + 1][col].classList.remove('gray');
-            elems[row + 1][col].classList.add(turn);
-        }
-    }
-}
+            for (let r = this.numRows - 1; r >= 0; r--) {
+                let circle = document.createElement("div");
+                circle.classList.add("circle", `r${r}c${c}`);
+                col.appendChild(circle);
+            }
 
-function checkWin(row, col) {
-    var start, end;
-
-
-    for (start = col; start >= 0 && grid[row][start] == turn; start--);
-    start++;
-    for (end = col; end < numColumns && grid[row][end] == turn; end++);
-    end--;
-
-    if (end - start + 1 >= winCondition) {
-        done = true;
-        for (var i = start; i <= end; i++) {
-            elems[row][i].classList.add('win');
+            this.getCircle(0, c).classList.add("candidate");
         }
     }
 
+    inBounds(row, col) {
+        return (0 <= row && row < this.numRows) && (0 <= col && col < this.numCols);
+    }
 
-    for (start = row; start >= 0 && grid[start][col] == turn; start--);
-    start++;
-    for (end = row; end < numRows && grid[end][col] == turn; end++);
-    end--;
-
-    if (end - start + 1 >= winCondition) {
-        done = true;
-        for (var i = start; i <= end; i++) {
-            elems[i][col].classList.add('win');
+    checkBounds(row, col) {
+        if (!this.inBounds(row, col)) {
+            throw new Error(`Out of bounds: (${row}, ${col})`);
         }
     }
 
+    getCircle(row, col) {
+        this.checkBounds(row, col);
 
-    for (start = 0; Math.min(row + start, col + start) >= 0 && grid[row + start][col + start] == turn; start--);
-    start++;
-    for (end = 0; Math.max(row + end, col + end) < Math.min(numRows, numColumns) && grid[row + end][col + end] == turn; end++);
-    end--;
-
-    if (end - start + 1 >= winCondition) {
-        done = true;
-        for (var i = start; i <= end; i++) {
-            elems[row + i][col + i].classList.add('win');
-        }
+        return this.gridElem.querySelector(`.r${row}c${col}`);
     }
 
-    for (start = 0; (row + start) >= 0 && (col - start) < numColumns && grid[row + start][col - start] == turn; start--);
-    start++;
-    for (end = 0; (col - end) >= 0 && (row + end) < numRows && grid[row + end][col - end] == turn; end++);
-    end--;
+    getColor(row, col) {
+        this.checkBounds(row, col);
 
-    if (end - start + 1 >= winCondition) {
-        done = true;
-        for (var i = start; i <= end; i++) {
-            elems[row + i][col - i].classList.add('win');
-        }
+        return this.grid[row * this.numCols + col];
     }
+
+    setColor(row, col, color) {
+        this.checkBounds(row, col);
+
+        this.grid[row * this.numCols + col] = color;
+    }
+
+    drop(col) {
+        if (this.gameOver || this.getColor(this.numRows - 1, col) != null) {
+            return;
+        }
+    
+        let row = 0;
+        while (this.getColor(row, col) != null) {
+            row++;
+        }
+
+        this.setColor(row, col, this.turn);
+        let circle = this.getCircle(row, col);
+        circle.classList.add(this.turn);
+        circle.classList.remove("candidate");
+
+        this.checkWin(row, col);
+        if (this.gameOver) {
+            this.gridElem.classList.add("game-over");
+            this.gridElem.classList.remove(`turn-${this.turn}`);
+
+            for (let candidate of this.gridElem.querySelectorAll(".candidate")) {
+                candidate.classList.remove("candidate");
+            }
+
+            return;
+        }
+
+        if (this.inBounds(row + 1, col)) {
+            this.getCircle(row + 1, col).classList.add("candidate");
+        }
+
+        this.gridElem.classList.remove(`turn-${this.turn}`);
+        this.turn = this.turn === ColorPink ? ColorCyan : ColorPink;
+        this.gridElem.classList.add(`turn-${this.turn}`);
+    }
+
+    checkWin(row, col) {
+        let start, end;
+    
+        // horizontal
+        for (start = col; start >= 0 && this.getColor(row, start) === this.turn; start--);
+        start++;
+        for (end = col; end < this.numCols && this.getColor(row, end) === this.turn; end++);
+        end--;
+    
+        if (end - start + 1 >= this.numToWin) {
+            this.gameOver = true;
+
+            for (let i = start; i <= end; i++) {
+                this.getCircle(row, i).classList.add("win");
+            }
+        }
+    
+        // vertical
+        for (start = row; start >= 0 && this.getColor(start, col) === this.turn; start--);
+        start++;
+        for (end = row; end < this.numRows && this.getColor(end, col) === this.turn; end++);
+        end--;
+    
+        if (end - start + 1 >= this.numToWin) {
+            this.gameOver = true;
+
+            for (let i = start; i <= end; i++) {
+                this.getCircle(i, col).classList.add("win");
+            }
+        }
+    
+        // rising diagonal
+        for (start = 0; Math.min(row + start, col + start) >= 0 && this.getColor(row + start, col + start) === this.turn; start--);
+        start++;
+        for (end = 0; Math.max(row + end, col + end) < Math.min(this.numRows, this.numCols) && this.getColor(row + end, col + end) === this.turn; end++);
+        end--;
+    
+        if (end - start + 1 >= this.numToWin) {
+            this.gameOver = true;
+
+            for (let i = start; i <= end; i++) {
+                this.getCircle(row + i, col + i).classList.add("win");
+            }
+        }
+    
+        // falling diagonal
+        for (start = 0; (row + start) >= 0 && (col - start) < this.numCols && this.getColor(row + start, col - start) === this.turn; start--);
+        start++;
+        for (end = 0; (col - end) >= 0 && (row + end) < this.numRows && this.getColor(row + end, col - end) === this.turn; end++);
+        end--;
+    
+        if (end - start + 1 >= this.numToWin) {
+            this.gameOver = true;
+
+            for (let i = start; i <= end; i++) {
+                this.getCircle(row + i, col - i).classList.add("win");
+            }
+        }
+    }    
 }
 
-function put(row, col) {
-    grid[row][col] = turn;
-    elems[row][col].classList.remove('tiny');
-}
+let grid = document.querySelector(".grid");
+new Game(grid, 6, 7, 4, ColorPink);

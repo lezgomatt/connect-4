@@ -21,19 +21,20 @@ body {
   border-radius: 25px;
   margin: 5px;
   transition: transform 0.2s ease 0s, background-color 0.4s, opacity 0.8s;
+  background: #d9d9d9;
+  transform: scale(0.2);
 }
 
-.gray { background: #d9d9d9; }
-.cyan { background: #40c2f2; }
-.pink { background: #f24076; }
+.turn-cyan .candidate, .cyan { background: #40c2f2; }
+.turn-pink .candidate, .pink { background: #f24076; }
 
-
-.tiny { transform: scale(0.2); }
-.col:hover .tiny:not(.gray) {
+.cyan, .pink { transform: none; }
+.col:hover .candidate {
   animation: grow 0.4s ease 0s infinite alternate;
 }
 
-.done :not(.win).circle { opacity: 0.15;  }
+.game-over .circle { opacity: 0.15; }
+.game-over .win { opacity: 1; }
 
 @keyframes grow {
   from { transform: scale(0.2) }
@@ -46,7 +47,7 @@ body {
   align-self: stretch;
 }
 
-#board {
+.grid {
   margin: 50px 0 5px;
   display: flex;
   padding: 5px;
