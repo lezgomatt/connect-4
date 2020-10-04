@@ -104,64 +104,49 @@ class Game {
     }
 
     checkWin(row, col) {
-        let start, end;
-    
-        // horizontal
-        for (start = col; start >= 0 && this.getColor(row, start) === this.turn; start--);
-        start++;
-        for (end = col; end < this.numCols && this.getColor(row, end) === this.turn; end++);
-        end--;
-    
-        if (end - start + 1 >= this.numToWin) {
-            this.gameOver = true;
+        const steps = {
+            horizontal: { row: 0, col: 1 },
+            vertical: { row: 1, col: 0 },
+            risingDiagonal: { row: 1, col: 1 },
+            fallingDiagonal: { row: 1, col: -1 },
+        };
 
-            for (let i = start; i <= end; i++) {
-                this.getCircle(row, i).classList.add("win");
+        for (let dir in steps) {
+            let step = steps[dir];
+
+            let countFw = this.count(row, col, step, this.turn);
+            let countBw = this.count(row, col, { row: -step.row, col: -step.col }, this.turn);
+            let countTotal = countFw + countBw - 1;
+
+            if (countTotal >= this.numToWin) {
+                this.gameOver = true;
+
+                let r = row + countBw * -step.row;
+                let c = col + countBw * -step.col;
+
+                for (let i = 0; i < countTotal; i++) {
+                    r += step.row;
+                    c += step.col;
+                    this.getCircle(r, c).classList.add("win");
+                }
             }
         }
-    
-        // vertical
-        for (start = row; start >= 0 && this.getColor(start, col) === this.turn; start--);
-        start++;
-        for (end = row; end < this.numRows && this.getColor(end, col) === this.turn; end++);
-        end--;
-    
-        if (end - start + 1 >= this.numToWin) {
-            this.gameOver = true;
+    }
 
-            for (let i = start; i <= end; i++) {
-                this.getCircle(i, col).classList.add("win");
-            }
-        }
-    
-        // rising diagonal
-        for (start = 0; Math.min(row + start, col + start) >= 0 && this.getColor(row + start, col + start) === this.turn; start--);
-        start++;
-        for (end = 0; Math.max(row + end, col + end) < Math.min(this.numRows, this.numCols) && this.getColor(row + end, col + end) === this.turn; end++);
-        end--;
-    
-        if (end - start + 1 >= this.numToWin) {
-            this.gameOver = true;
+    count(startRow, startCol, step, color) {
+        let count = 0;
 
-            for (let i = start; i <= end; i++) {
-                this.getCircle(row + i, col + i).classList.add("win");
-            }
-        }
-    
-        // falling diagonal
-        for (start = 0; (row + start) >= 0 && (col - start) < this.numCols && this.getColor(row + start, col - start) === this.turn; start--);
-        start++;
-        for (end = 0; (col - end) >= 0 && (row + end) < this.numRows && this.getColor(row + end, col - end) === this.turn; end++);
-        end--;
-    
-        if (end - start + 1 >= this.numToWin) {
-            this.gameOver = true;
+        let r = startRow;
+        let c = startCol;
 
-            for (let i = start; i <= end; i++) {
-                this.getCircle(row + i, col - i).classList.add("win");
-            }
+        while (this.inBounds(r, c) && this.getColor(r, c) === color) {
+            count++;
+            r += step.row;
+            c += step.col;
         }
-    }    
+
+        return count;
+    }
 }
 
 let grid = document.querySelector(".grid");
