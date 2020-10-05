@@ -150,4 +150,4 @@ class Game {
 }
 
 let grid = document.querySelector(".grid");
-new Game(grid, 6, 7, 4, ColorPink);
+new Game(grid, 6, 7, 4, Math.random() < 0.5 ? ColorPink : ColorCyan);
