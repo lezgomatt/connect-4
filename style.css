@@ -49,7 +49,7 @@ body {
 .turn-cyan .candidate, .cyan { background: #40c2f2; }
 .pink, .cyan { transform: none; }
 
-.game-over .circle { opacity: 0.15; }
+.game-over .circle { opacity: 0.2; }
 .game-over .win { opacity: 1; }
 
 .col:hover .candidate { animation: grow 0.4s ease 0s infinite alternate; }
