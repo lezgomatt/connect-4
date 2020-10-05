@@ -4,7 +4,7 @@ const ColorPink = "pink";
 const ColorCyan = "cyan";
 
 class Game {
-    constructor(gridElem, numRows, numCols, numToWin, firstColor) {
+    constructor(gameElem, numRows, numCols, numToWin, firstColor) {
         this.numRows = numRows;
         this.numCols = numCols;
         this.numToWin = numToWin;
@@ -16,7 +16,8 @@ class Game {
         this.gameOver = false;
         this.turn = firstColor;
 
-        this.gridElem = gridElem;
+        this.gridElem = gameElem.querySelector(".grid");
+        this.messagesElem = gameElem.querySelector(".messages");
         this.initDom();
     }
 
@@ -91,11 +92,22 @@ class Game {
                 candidate.classList.remove("candidate");
             }
 
+            this.messagesElem.classList.add(`winner-${this.turn}`);
+
             return;
         }
 
         if (this.inBounds(row + 1, col)) {
             this.getCircle(row + 1, col).classList.add("candidate");
+        }
+
+        if (this.gridElem.querySelector(".candidate") == null) {
+            this.gameOver = true;
+
+            this.gridElem.classList.remove(`turn-${this.turn}`);
+            this.messagesElem.classList.add("winner-draw");
+
+            return;
         }
 
         this.gridElem.classList.remove(`turn-${this.turn}`);
@@ -149,5 +161,5 @@ class Game {
     }
 }
 
-let grid = document.querySelector(".grid");
-new Game(grid, 6, 7, 4, Math.random() < 0.5 ? ColorPink : ColorCyan);
+let gameElem = document.querySelector(".game");
+new Game(gameElem, 6, 7, 4, Math.random() < 0.5 ? ColorPink : ColorCyan);

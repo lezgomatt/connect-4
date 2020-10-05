@@ -12,7 +12,7 @@ body {
 
 .logo { margin-top: -10px; }
 
-#game {
+.game {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,3 +57,20 @@ body {
   from { transform: scale(0.2) }
   to   { transform: scale(0.8); }
 }
+
+.messages {
+  margin-top: 15px;
+  color: #202020;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 40px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pink-wins { display: none; }
+.winner-pink .pink-wins { display: block; }
+.cyan-wins { display: none; }
+.winner-cyan .cyan-wins { display: block; }
+.draw { display: none; }
+.winner-draw .draw { display: block; }
