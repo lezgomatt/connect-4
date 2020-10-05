@@ -3,6 +3,10 @@
 const ColorPink = "pink";
 const ColorCyan = "cyan";
 
+function flipColor(color) {
+    return color === ColorPink ? ColorCyan : ColorPink;
+}
+
 class Game {
     constructor(gameElem, numRows, numCols, numToWin, firstColor) {
         this.numRows = numRows;
@@ -19,6 +23,9 @@ class Game {
         this.gridElem = gameElem.querySelector(".grid");
         this.messagesElem = gameElem.querySelector(".messages");
         this.initDom();
+
+        this.messagesElem.querySelector(".play-again")
+            .addEventListener("click", () => this.playAgain());
     }
 
     initDom() {
@@ -111,7 +118,7 @@ class Game {
         }
 
         this.gridElem.classList.remove(`turn-${this.turn}`);
-        this.turn = this.turn === ColorPink ? ColorCyan : ColorPink;
+        this.turn = flipColor(this.turn);
         this.gridElem.classList.add(`turn-${this.turn}`);
     }
 
@@ -158,6 +165,21 @@ class Game {
         }
 
         return count;
+    }
+
+    playAgain() {
+        this.grid = new Array(this.numRows * this.numCols).fill(null);
+        this.gameOver = false;
+        this.turn = flipColor(this.turn);
+
+        this.gridElem.classList.remove("turn-pink", "turn-cyan", "game-over");
+        this.messagesElem.classList.remove("winner-pink", "winner-cyan", "winner-draw");
+
+        while (this.gridElem.firstChild != null) {
+            this.gridElem.removeChild(this.gridElem.firstChild);
+        }
+
+        this.initDom();
     }
 }
 

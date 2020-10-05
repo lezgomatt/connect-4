@@ -8,6 +8,7 @@ body {
   margin: 0;
   border-top: 10px solid #f24040;
   background: white;
+  font-family: sans-serif;
 }
 
 .logo { margin-top: -10px; }
@@ -61,7 +62,6 @@ body {
 .messages {
   margin-top: 15px;
   color: #202020;
-  font-family: sans-serif;
   font-weight: bold;
   font-size: 40px;
   text-align: center;
@@ -74,3 +74,23 @@ body {
 .winner-cyan .cyan-wins { display: block; }
 .draw { display: none; }
 .winner-draw .draw { display: block; }
+
+.play-again {
+  display: none;
+  margin: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 40px;
+  background: #f24040;
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.winner-pink .play-again,
+.winner-cyan .play-again,
+.winner-draw .play-again {
+  display: inline-block;
+}
