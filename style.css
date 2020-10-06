@@ -11,6 +11,8 @@ body {
   font-family: sans-serif;
 }
 
+a { color: #4087f2; }
+
 .logo { margin-top: -10px; }
 
 .game {
@@ -21,7 +23,7 @@ body {
 
 .grid {
   display: flex;
-  margin: 50px 0 5px;
+  margin: 25px 0 5px;
   padding: 5px;
 }
 
@@ -94,3 +96,5 @@ body {
 .winner-draw .play-again {
   display: inline-block;
 }
+
+.source { margin-top: 15px; }
